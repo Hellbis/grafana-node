@@ -1,0 +1,21 @@
+name: CI NestJS
+
+on:
+  pull_request:
+    branches: ['main']
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Connect
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} -p ${{ secrets.SSH_PORT }} "${{ secrets.SSH_PASSWORD }}"
+
+      - name: Deploy
+        run: 'cd /home/admin/app && git checkout main && git pull'
+
+      - name: Configure Project
+        run: |
+          yarn install
+          yarn build
+          yarn test
