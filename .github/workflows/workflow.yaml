@@ -1,0 +1,21 @@
+name: CI NestJS
+
+on:
+  pull_request:
+    branches: ['main']
+
+jobs:
+  ci-nestjs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Using NestJS
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20.x
+      - name: Configure Project
+        run: |
+          yarn install
+          yarn build
+          yarn test
