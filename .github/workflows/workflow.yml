@@ -8,14 +8,22 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Connect
-        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} -p ${{ secrets.SSH_PORT }} && ${{ secrets.SSH_PASSWORD }}
-
-      - name: Deploy
-        run: 'cd /home/admin/app && git checkout main && git pull'
-
-      - name: Configure Project
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Using NestJS
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20.x
+      - name: Test Project
         run: |
           yarn install
           yarn build
           yarn test
+
+      - name: install ssh keys
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PASSWORD }}" > ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+      - name: connect and pull
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.SERVER_PATH }} && git checkout main && git pull && yarn install && yarn build"
