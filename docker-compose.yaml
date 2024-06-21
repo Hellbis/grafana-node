@@ -1,39 +1,11 @@
 version: '3'
 
-networks:
-  loki:
-
-volumes:
-   grafana-data:
-   loki-data:
-
 services:
-  nestjs_app:
+  web_api:
     build:
       context: .
       dockerfile: Dockerfile
+    expose:
+      - 3000
     ports:
       - '3000:3000'
-    networks:
-      - loki
-
-  grafana:
-    image: grafana/grafana:latest
-    ports:
-      - '3200:3200'
-    volumes:
-      - grafana-data:/var/lib/grafana
-    depends_on:
-      - loki
-    networks:
-      - loki
-  
-  loki:
-    image: grafana/loki:latest
-    ports:
-      - '3100:3100'
-    volumes:
-      - loki-data:/data
-    networks:
-      - loki
-
