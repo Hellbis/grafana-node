@@ -10,6 +10,7 @@ services:
     ports:
       - '3000:3000'
   postgres:
+    container_name: postgres
     image: bitnami/postgresql:latest
     expose:
       - 5432
